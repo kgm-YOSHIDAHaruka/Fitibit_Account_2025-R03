@@ -32,8 +32,10 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23Q56S&redi
 
 解析用ID = st.text_input("研究対象者識別番号（例：Y001）")
 認証URL = st.text_input("コピーしたURLをここに貼り付けてください")
-client_id = st.text_input("Client ID", value="23Q56S")
-client_secret = st.text_input("Client Secret", type="password")
+
+#Client情報はコード内で固定かつ被験者には表示しない
+client_id = "23Q56S"
+client_secret = "223b81b18cd663e350028b126b124af0"
 
 # 保存先を固定して非表示にする（OneDrive上のディレクトリ）
 save_path = "C:/Users/21005/OneDrive - KAGOME/ドキュメント/CGM/Fitbit_API/PythonCode/TestData"
