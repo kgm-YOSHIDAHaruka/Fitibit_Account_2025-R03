@@ -35,7 +35,7 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23Q56S&redi
 
 #Client情報はコード内で固定かつ被験者には表示しない
 client_id = "23Q56S"
-client_secret = "223b81b18cd663e350028b126b124af0"
+client_secret = "password"
 
 # 保存先を固定して非表示にする（OneDrive上のディレクトリ）
 save_path = "C:/Users/21005/OneDrive - KAGOME/ドキュメント/CGM/Fitbit_API/PythonCode/TestData"
