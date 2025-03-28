@@ -34,13 +34,16 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23Q56S&redi
 認証URL = st.text_input("コピーしたURLをここに貼り付けてください")
 
 #Client情報はコード内で固定かつ被験者には表示しない
-client_id = "23Q56S"
-client_secret = "password"
+#実際の情報は非公開にしてStreamlit Cloudに預けた情報を参照する
+import streamlit as st
+
+client_id = st.secrets["client_id"]
+client_secret = st.secrets["client_secret"]
 
 # 保存先を固定して非表示にする（OneDrive上のディレクトリ）
 save_path = "C:/Users/21005/OneDrive - KAGOME/ドキュメント/CGM/Fitbit_API/PythonCode/TestData"
 
-if st.button("トークンを取得して保存"):
+if st.button("アカウントを連携"):
     if 解析用ID and 認証URL and client_id and client_secret:
         try:
             parsed_url = urlparse(認証URL)
