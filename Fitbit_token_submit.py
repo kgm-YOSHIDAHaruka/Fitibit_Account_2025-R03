@@ -1,8 +1,6 @@
-# 自動更新処理＆クラウド保存（ローカルパス指定）版
 # =======================
 # ✅ アプリ① 被験者用トークン登録ページ（refresh_token付き保存）
 # =======================
-# ファイル名: Fitbit_token_submit.py
 
 import streamlit as st
 import requests
@@ -30,51 +28,55 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QCLW&redi
 コピーしたURLを、下記にペーストしてください。
 """)
 
-解析用ID = st.text_input("研究対象者識別番号（例：Y001）")
-認証URL = st.text_input("コピーしたURLをここに貼り付けてください")
+subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_chars=10)
+redirected_url = st.text_input("コピーしたURLを貼り付けてください")
 
-#Client情報はコード内で固定かつ被験者には表示しない
-#実際の情報は非公開にしてStreamlit Cloudに預けた情報を参照する
-import streamlit as st
-
-client_id = st.secrets["client_id"]
-client_secret = st.secrets["client_secret"]
-
-# 保存先を固定して非表示にする（OneDrive上のディレクトリ）
-save_path = "C:/Users/21005/OneDrive - KAGOME/ドキュメント/CGM/Fitbit_API/PythonCode/TestData"
 
 if st.button("アカウントを連携"):
-    if 解析用ID and 認証URL and client_id and client_secret:
+    if not subject_id or not redirected_url:
+        st.error("識別番号とURLの両方を入力してください。")
+    else:
         try:
-            parsed_url = urlparse(認証URL)
+            # 認証コードを抽出
+            parsed_url = urlparse(redirected_url)
             code = parse_qs(parsed_url.query).get("code", [None])[0]
 
             if not code:
-                st.error("認証コードがURLから取得できませんでした。URLを確認してください。")
+                st.error("URLから認証コードが取得できませんでした。URLが正しいか確認してください。")
             else:
+                # トークン取得用の情報
+                client_id = "23QCLW"
+                client_secret = "099d7b5b52c9dc02119ea0ff0e144ced"
+                redirect_uri = "http://localhost:8000"
+
+                token_url = "https://api.fitbit.com/oauth2/token"
                 headers = {
-                    "Authorization": f"Basic {requests.auth._basic_auth_str(client_id, client_secret)}",
+                    "Authorization": f"Basic {requests.auth._basic_auth_str(client_id, client_secret).split(' ')[1]}",
                     "Content-Type": "application/x-www-form-urlencoded"
                 }
                 data = {
                     "client_id": client_id,
                     "grant_type": "authorization_code",
-                    "redirect_uri": "http://localhost:8000",
+                    "redirect_uri": redirect_uri,
                     "code": code
                 }
-                response = requests.post("https://api.fitbit.com/oauth2/token", headers=headers, data=data)
+
+                response = requests.post(token_url, headers=headers, data=data)
 
                 if response.status_code == 200:
-                    token_info = response.json()
-                    token_info["client_id"] = client_id
-                    token_info["client_secret"] = client_secret
-                    os.makedirs(save_path, exist_ok=True)
-                    with open(os.path.join(save_path, f"token_{解析用ID}.json"), "w", encoding="utf-8") as f:
-                        json.dump(token_info, f, ensure_ascii=False, indent=2)
-                    st.success("アカウントの連携に成功しました。ご協力ありがとうございました！")
+                    token_data = response.json()
+
+                    # ✅ client_id / secret をトークン情報に追加して保存！
+                    token_data["client_id"] = client_id
+                    token_data["client_secret"] = client_secret
+
+                    filename = f"token_{subject_id}.json"
+                    with open(filename, "w", encoding="utf-8") as f:
+                        json.dump(token_data, f, ensure_ascii=False, indent=2)
+                    st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename}")
                 else:
-                    st.error(f"アカウントの連携に成功に失敗しました: {response.text}")
+                    st.error(f"❌ アカウントの連携に失敗しました：{response.status_code}\n{response.text}")
+
         except Exception as e:
-            st.error(f"URLの解析またはアカウントの連携中にエラーが発生しました: {str(e)}")
-    else:
-        st.warning("すべての項目を入力してください。")
+            st.error(f"⚠ エラーが発生しました：{str(e)}")
+    
