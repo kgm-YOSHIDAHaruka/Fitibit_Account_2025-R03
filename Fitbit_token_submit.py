@@ -22,7 +22,7 @@ st.markdown("""
 
 ### Step.2 以下のURLにアクセスし、表示されたページのURLをコピーしてください。
 ```
-https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QC69&redirect_uri=http://localhost:8000&scope=sleep
+https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QCLW&redirect_uri=http://localhost:8000&scope=sleep%20profile
 ```
 
 > ※「このサイトにアクセス出来ません」と表示されると思いますが、閉じずにURLをコピーしてください。
