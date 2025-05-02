@@ -114,13 +114,13 @@ if st.button("アカウントを連携"):
                             mime="application/json"
                         )
 
-                   # アップロード先の案内（ここにDriveリンクを入れる）
-                   upload_url = "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxx"  # 用意したURLに置き換え
-                   st.markdown("---")
-                   st.info(f"""
-                   ✅ ダウンロードが完了したら、以下のリンクを開いて、保存されたファイル（`{json_filename}`）をアップロードしてください：
-                   🔗 [アップロード用Google Driveフォルダ]({upload_url})
-                   """)
+                    # アップロード先の案内（ここにDriveリンクを入れる）
+                    upload_url = "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxx"  # 用意したURLに置き換え
+                    st.markdown("---")
+                    st.info(f"""
+                    ✅ ダウンロードが完了したら、以下のリンクを開いて、保存されたファイルをアップロードしてください：
+                    🔗 [アップロード用Google Driveフォルダ]({upload_url})
+                    """)
                         
                 else:
                     st.error(f"❌ アカウントの連携に失敗しました：{response.status_code}\n{response.text}")
