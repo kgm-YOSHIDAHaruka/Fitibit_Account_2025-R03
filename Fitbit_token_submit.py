@@ -117,8 +117,10 @@ if st.button("アカウントを連携"):
                     # アップロード先の案内（ここにDriveリンクを入れる）
                     upload_url = "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxx"  # 用意したURLに置き換え
                     st.markdown("---")
-                    st.info(f"""
-                    ✅ ダウンロードが完了したら、以下のリンクを開いて、保存されたファイルをアップロードしてください：
+                    st.markdown(f"""
+                    ### 📝 ファイルをアップロードしてください
+                    1. 上のボタンでファイル（`{filename}`）をダウンロード
+                    2. 以下のリンクから、ダウンロードしたファイルをアップロード
                     🔗 [アップロード用Google Driveフォルダ]({upload_url})
                     """)
                         
