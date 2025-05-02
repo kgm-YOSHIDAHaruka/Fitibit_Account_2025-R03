@@ -10,8 +10,7 @@ import requests
 import json
 import os
 from urllib.parse import urlparse, parse_qs
-import io
-from googleapiclient.http import MediaIoBaseUpload
+
 
 
 st.set_page_config(page_title="Fitbit認証コード登録", page_icon="🔑")
@@ -104,20 +103,16 @@ if st.button("アカウントを連携"):
                     filename = f"token_{subject_id}.json"
                     with open(filename, "w", encoding="utf-8") as f:
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
-                        f.flush()  # ← 明示的にディスクに書き込む
-                        os.fsync(f.fileno())  # ← OSレベルで同期
 
                     st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename}")
 
-                    try:
-                        uploaded_id = upload_saved_file_to_drive(
-                            local_file_path=filename,
-                            drive_folder_id="1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt",
-                            filename_on_drive=filename
+                    with open(filename, "rb") as f:
+                        st.download_button(
+                            label="トークンファイルをダウンロード",
+                            data=f,
+                            file_name=filename,
+                            mime="application/json"
                         )
-                        st.success(f"Google Driveへのアップロードに成功しました！（ID: {uploaded_id}）")
-                    except Exception as e:
-                        st.error(f"Google Driveへのアップロードに失敗しました：{e}")
                         
                 else:
                     st.error(f"❌ アカウントの連携に失敗しました：{response.status_code}\n{response.text}")
