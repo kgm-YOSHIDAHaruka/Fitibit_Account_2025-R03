@@ -42,7 +42,7 @@ def upload_token_data_to_drive(token_data, drive_folder_id, filename_on_drive):
     json_str = json.dumps(token_data, ensure_ascii=False, indent=2)
     json_bytes = io.BytesIO(json_str.encode("utf-8"))
 
-    media = MediaIoBaseUpload(json_bytes, mimetype="application/json", resumable=True)
+    media = MediaIoBaseUpload(json_bytes, mimetype="application/json", resumable=False)
 
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gdrive"],
