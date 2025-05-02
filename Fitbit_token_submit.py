@@ -100,7 +100,7 @@ if st.button("アカウントを連携"):
                     try:
                         uploaded_id = upload_to_drive(
                             local_file_path=filename,
-                            drive_folder_id="1ABCDEFxyz1234",  # ←DriveのフォルダIDに置き換えてください
+                            drive_folder_id="1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt",  # ←DriveのフォルダIDに置き換え
                             filename_on_drive=filename
                         )
                         st.success(f"Google Driveへのアップロードに成功しました！（ID: {uploaded_id}）")
