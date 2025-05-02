@@ -48,7 +48,13 @@ def upload_to_drive(local_file_path, drive_folder_id, filename_on_drive):
     if not os.path.exists(local_file_path):
         st.error(f"ファイルが存在しません: {local_file_path}")
     
-    media = MediaFileUpload(local_file_path, mimetype='application/json', resumable=True)
+    media = MediaFileUpload(local_file_path, mimetype="application/json", resumable=True)
+
+    file_metadata = {
+        "name": filename_on_drive,
+        "parents": [drive_folder_id]
+    }
+    
     uploaded_file = service.files().create(
         body=file_metadata,
         media_body=media,
