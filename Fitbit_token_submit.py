@@ -3,10 +3,14 @@
 # =======================
 
 import streamlit as st
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 import requests
 import json
 import os
 from urllib.parse import urlparse, parse_qs
+
 
 st.set_page_config(page_title="Fitbit認証コード登録", page_icon="🔑")
 st.title("🔑 Fitbit認証コード 登録ページ")
@@ -31,6 +35,23 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QCLW&redi
 subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_chars=10)
 redirected_url = st.text_input("コピーしたURLを貼り付けてください")
 
+def upload_to_drive(local_file_path, drive_folder_id, filename_on_drive):
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gdrive"],
+        scopes=["https://www.googleapis.com/auth/drive.file"]
+    )
+    service = build("drive", "v3", credentials=credentials)
+    file_metadata = {
+        "name": filename_on_drive,
+        "parents": [drive_folder_id]
+    }
+    media = MediaFileUpload(local_file_path, resumable=True)
+    uploaded_file = service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields="id"
+    ).execute()
+    return uploaded_file.get("id")
 
 if st.button("アカウントを連携"):
     if not subject_id or not redirected_url:
@@ -74,6 +95,18 @@ if st.button("アカウントを連携"):
                     with open(filename, "w", encoding="utf-8") as f:
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
                     st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename}")
+
+                    # ✅ Driveにアップロード
+                    try:
+                        uploaded_id = upload_to_drive(
+                            local_file_path=filename,
+                            drive_folder_id="1ABCDEFxyz1234",  # ←DriveのフォルダIDに置き換えてください
+                            filename_on_drive=filename
+                        )
+                        st.success(f"Google Driveへのアップロードに成功しました！（ID: {uploaded_id}）")
+                    except Exception as e:
+                       st.error(f"Google Driveへのアップロードに失敗しました：{e}")
+                        
                 else:
                     st.error(f"❌ アカウントの連携に失敗しました：{response.status_code}\n{response.text}")
 
