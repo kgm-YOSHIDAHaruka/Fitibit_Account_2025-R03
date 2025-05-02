@@ -104,7 +104,7 @@ if st.button("アカウントを連携"):
                     with open(filename, "w", encoding="utf-8") as f:
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
 
-                    st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename}")
+                    st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename} トークンファイルをダウンロードしてください")
 
                     with open(filename, "rb") as f:
                         st.download_button(
