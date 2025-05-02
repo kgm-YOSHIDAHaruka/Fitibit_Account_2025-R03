@@ -38,9 +38,11 @@ subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_char
 redirected_url = st.text_input("コピーしたURLを貼り付けてください")
 
 def upload_token_data_to_drive(token_data, drive_folder_id, filename_on_drive):
-    # メモリ上にファイルを構築
-    json_bytes = json.dumps(token_data, ensure_ascii=False, indent=2).encode("utf-8")
-    media = MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json", resumable=True)
+    # ✅ JSON文字列をバイト型にエンコード
+    json_str = json.dumps(token_data, ensure_ascii=False, indent=2)
+    json_bytes = io.BytesIO(json_str.encode("utf-8"))
+
+    media = MediaIoBaseUpload(json_bytes, mimetype="application/json", resumable=True)
 
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gdrive"],
