@@ -120,4 +120,3 @@ if st.button("アカウントを連携"):
 
         except Exception as e:
             st.error(f"⚠ エラーが発生しました：{str(e)}")
-    
