@@ -104,12 +104,14 @@ if st.button("アカウントを連携"):
                     filename = f"token_{subject_id}.json"
                     with open(filename, "w", encoding="utf-8") as f:
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
+                        f.flush()  # ← 明示的にディスクに書き込む
+                        os.fsync(f.fileno())  # ← OSレベルで同期
+
                     st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename}")
 
-                    # ✅ Driveにアップロード（メモリ経由）
                     try:
-                        uploaded_id = upload_token_data_to_drive(
-                            token_data=token_data,
+                        uploaded_id = upload_saved_file_to_drive(
+                            local_file_path=filename,
                             drive_folder_id="1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt",
                             filename_on_drive=filename
                         )
