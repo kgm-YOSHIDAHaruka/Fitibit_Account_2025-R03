@@ -10,6 +10,8 @@ import requests
 import json
 import os
 from urllib.parse import urlparse, parse_qs
+import io
+from googleapiclient.http import MediaIoBaseUpload
 
 
 st.set_page_config(page_title="Fitbit認証コード登録", page_icon="🔑")
@@ -35,20 +37,16 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QCLW&redi
 subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_chars=10)
 redirected_url = st.text_input("コピーしたURLを貼り付けてください")
 
-def upload_to_drive(local_file_path, drive_folder_id, filename_on_drive):
+def upload_token_data_to_drive(token_data, drive_folder_id, filename_on_drive):
+    # メモリ上にファイルを構築
+    json_bytes = json.dumps(token_data, ensure_ascii=False, indent=2).encode("utf-8")
+    media = MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json", resumable=True)
+
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gdrive"],
         scopes=["https://www.googleapis.com/auth/drive.file"]
     )
     service = build("drive", "v3", credentials=credentials)
-    file_metadata = {
-        "name": filename_on_drive,
-        "parents": [drive_folder_id]
-    }
-    if not os.path.exists(local_file_path):
-        st.error(f"ファイルが存在しません: {local_file_path}")
-    
-    media = MediaFileUpload(local_file_path, mimetype="application/json", resumable=True)
 
     file_metadata = {
         "name": filename_on_drive,
@@ -60,6 +58,7 @@ def upload_to_drive(local_file_path, drive_folder_id, filename_on_drive):
         media_body=media,
         fields="id"
     ).execute()
+    
     return uploaded_file.get("id")
 
 if st.button("アカウントを連携"):
@@ -105,15 +104,15 @@ if st.button("アカウントを連携"):
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
                     st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename}")
 
-                    # ✅ Driveにアップロード
-                    try:
-                        uploaded_id = upload_to_drive(
-                            local_file_path=filename,
-                            drive_folder_id="1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt",  # ←DriveのフォルダIDに置き換え
-                            filename_on_drive=filename
-                        )
-                        st.success(f"Google Driveへのアップロードに成功しました！（ID: {uploaded_id}）")
-                    except Exception as e:
+                   # ✅ Driveにアップロード（メモリ経由）
+                   try:
+                       uploaded_id = upload_token_data_to_drive(
+                           token_data=token_data,
+                           drive_folder_id="1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt",
+                           filename_on_drive=filename
+                       )
+                       st.success(f"Google Driveへのアップロードに成功しました！（ID: {uploaded_id}）")
+                   except Exception as e:
                        st.error(f"Google Driveへのアップロードに失敗しました：{e}")
                         
                 else:
