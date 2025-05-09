@@ -12,7 +12,6 @@ import os
 from urllib.parse import urlparse, parse_qs
 
 
-
 st.set_page_config(page_title="Fitbit認証コード登録", page_icon="🔑")
 st.title("🔑 Fitbit認証コード 登録ページ")
 
@@ -33,38 +32,19 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QCLW&redi
 コピーしたURLを、下記にペーストしてください。
 """)
 
-subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_chars=10)
 redirected_url = st.text_input("コピーしたURLを貼り付けてください")
+subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_chars=10)
 
-def upload_token_data_to_drive(token_data, drive_folder_id, filename_on_drive):
-    # ✅ JSON文字列をバイト型にエンコード
-    json_str = json.dumps(token_data, ensure_ascii=False, indent=2)
-    json_bytes = io.BytesIO(json_str.encode("utf-8"))
 
-    media = MediaIoBaseUpload(json_bytes, mimetype="application/json", resumable=False)
-
-    credentials = service_account.Credentials.from_service_account_info(
-        st.secrets["gdrive"],
-        scopes=["https://www.googleapis.com/auth/drive.file"]
-    )
-    service = build("drive", "v3", credentials=credentials)
-
-    file_metadata = {
-        "name": filename_on_drive,
-        "parents": [drive_folder_id]
-    }
-    
-    uploaded_file = service.files().create(
-        body=file_metadata,
-        media_body=media,
-        fields="id"
-    ).execute()
-    
-    return uploaded_file.get("id")
+# 初期化処理
+if "download_success" not in st.session_state:
+    st.session_state["download_success"] = False
 
 if st.button("アカウントを連携"):
+    st.session_state["download_success"] = False  # 連携開始時にリセット
+    
     if not subject_id or not redirected_url:
-        st.error("識別番号とURLの両方を入力してください。")
+        st.error("URLと識別番号の両方を入力してください。")
     else:
         try:
             # 認証コードを抽出
@@ -75,8 +55,8 @@ if st.button("アカウントを連携"):
                 st.error("URLから認証コードが取得できませんでした。URLが正しいか確認してください。")
             else:
                 # トークン取得用の情報
-                client_id = "23QCLW"
-                client_secret = "099d7b5b52c9dc02119ea0ff0e144ced"
+                client_id = st.secrets["fitbit"]["client_id"]
+                client_secret = st.secrets["fitbit"]["client_secret"]
                 redirect_uri = "http://localhost:8000"
 
                 token_url = "https://api.fitbit.com/oauth2/token"
@@ -104,30 +84,41 @@ if st.button("アカウントを連携"):
                     with open(filename, "w", encoding="utf-8") as f:
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
 
+                    # ✅ ダウンロードフラグをTrueに設定
+                    st.session_state["download_success"] = True
+
                     st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename} トークンファイルをダウンロードしてください")
-
-                    with open(filename, "rb") as f:
-                        st.download_button(
-                            label="トークンファイルをダウンロード",
-                            data=f,
-                            file_name=filename,
-                            mime="application/json"
-                        )
-
-                    # アップロード先の案内（ここにDriveリンクを入れる）
-                    upload_url = "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxx"  # 用意したURLに置き換え
-                    st.markdown("---")
-                    st.markdown(f"""
-                    ### 📝 ファイルをアップロードしてください
-                    1. 上のボタンでファイルをダウンロード
-                    2. 以下のリンクから、ダウンロードしたファイルをアップロード
-                    🔗 [アップロード用Google Driveフォルダ]({upload_url})
-                    """)
-                        
+                    
                 else:
                     st.error(f"❌ アカウントの連携に失敗しました：{response.status_code}\n{response.text}")
 
         except Exception as e:
             st.error(f"⚠ エラーが発生しました：{str(e)}")
+
+            
+# ✅ ダウンロード後の案内はセッションで制御
+if st.session_state["download_success"] and st.session_state["filename"]:
+    try:
+        with open(st.session_state["filename"], "rb") as f:
+            st.download_button(
+                label="トークンファイルをダウンロード",
+                data=f,
+                file_name=st.session_state["filename"],
+                mime="application/json"
+            )
+
+        # アップロード先の案内（ここにDriveリンクを入れる）
+        upload_url = "https://drive.google.com/drive/folders/1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt?usp=drive_link"  #用意したアップロード先
+        st.markdown("---")
+        st.markdown(f"""
+        ### 📝 ファイルをアップロードしてください
+        
+        1. 上のボタンでファイルをダウンロード
+        2. 以下のリンクから、ダウンロードしたファイルをアップロード
+        🔗 [アップロード用Google Driveフォルダ]({upload_url})
+        """)   
+    except FileNotFoundError:
+        st.error("ファイルが見つかりませんでした。再度連携処理を行ってください。")
+ 
 
 
