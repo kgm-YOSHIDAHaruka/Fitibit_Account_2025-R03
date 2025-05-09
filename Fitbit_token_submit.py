@@ -54,8 +54,8 @@ if st.button("アカウントを連携"):
                 st.error("URLから認証コードが取得できませんでした。URLが正しいか確認してください。")
             else:
                 # トークン取得用の情報
-                client_id = st.secrets["fitbit"]["client_id"]
-                client_secret = st.secrets["fitbit"]["client_secret"]
+                client_id = st.secrets["client_id"]
+                client_secret = st.secrets["client_secret"]
                 redirect_uri = "http://localhost:8000"
 
                 token_url = "https://api.fitbit.com/oauth2/token"
