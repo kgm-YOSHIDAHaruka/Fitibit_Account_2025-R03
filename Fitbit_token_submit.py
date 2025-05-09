@@ -3,12 +3,8 @@
 # =======================
 
 import streamlit as st
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
 import requests
 import json
-import os
 from urllib.parse import urlparse, parse_qs
 
 
@@ -39,6 +35,9 @@ subject_id = st.text_input("研究対象者識別番号（例 Y001）", max_char
 # 初期化処理
 if "download_success" not in st.session_state:
     st.session_state["download_success"] = False
+
+if "filename" not in st.session_state:
+    st.session_state["filename"] = None
 
 if st.button("アカウントを連携"):
     st.session_state["download_success"] = False  # 連携開始時にリセット
@@ -84,9 +83,9 @@ if st.button("アカウントを連携"):
                     with open(filename, "w", encoding="utf-8") as f:
                         json.dump(token_data, f, ensure_ascii=False, indent=2)
 
-                    # ✅ ダウンロードフラグをTrueに設定
+                    # ✅ セッションに保存
+                    st.session_state["filename"] = filename
                     st.session_state["download_success"] = True
-
                     st.success(f"○ アカウントの連携に成功しました！\nファイル名：{filename} トークンファイルをダウンロードしてください")
                     
                 else:
@@ -108,17 +107,17 @@ if st.session_state["download_success"] and st.session_state["filename"]:
             )
 
         # アップロード先の案内（ここにDriveリンクを入れる）
-        upload_url = "https://drive.google.com/drive/folders/1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt?usp=drive_link"  #用意したアップロード先
+        upload_url = "https://drive.google.com/drive/folders/1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt?usp=drive_link"  # 用意したアップロード先
         st.markdown("---")
         st.markdown(f"""
         ### 📝 ファイルをアップロードしてください
         
         1. 上のボタンでファイルをダウンロード
         2. 以下のリンクから、ダウンロードしたファイルをアップロード
+        
         🔗 [アップロード用Google Driveフォルダ]({upload_url})
         """)   
+        
     except FileNotFoundError:
         st.error("ファイルが見つかりませんでした。再度連携処理を行ってください。")
- 
-
 
