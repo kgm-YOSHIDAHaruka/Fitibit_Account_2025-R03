@@ -110,7 +110,7 @@ if st.session_state["download_success"] and st.session_state["filename"]:
         upload_url = "https://drive.google.com/drive/folders/1goF9Yy9G5WxLqJRaYIsuvCfrfnq5l4Kt?usp=drive_link"  # 用意したアップロード先
         st.markdown("---")
         st.markdown(f"""
-        ### 📝 ファイルをアップロードしてください
+        ### Step.3 📝 ファイルをアップロードしてください
         
         1. 上のボタンでファイルをダウンロード
         2. 以下のリンクから、ダウンロードしたファイルをアップロード
