@@ -25,7 +25,6 @@ https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QCLW&redi
 
 > ※「このサイトにアクセス出来ません」と表示されると思いますが、閉じずにURLをコピーしてください。
 
-コピーしたURLを、下記にペーストしてください。
 """)
 
 redirected_url = st.text_input("コピーしたURLを貼り付けてください")
@@ -112,8 +111,7 @@ if st.session_state["download_success"] and st.session_state["filename"]:
         st.markdown(f"""
         ### Step.3 📝 ファイルをアップロードしてください
         
-        1. 上のボタンでファイルをダウンロード
-        2. 以下のリンクから、ダウンロードしたファイルをアップロード
+        以下のリンクから、上でダウンロードしたファイルのアップロードをお願いいたします。
         
         🔗 [アップロード用フォルダ]({upload_url})
         """)   
