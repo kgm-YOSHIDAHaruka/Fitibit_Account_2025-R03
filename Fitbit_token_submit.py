@@ -56,7 +56,7 @@ if st.button("アカウントを連携"):
                 # トークン取得用の情報
                 client_id = st.secrets["client_id"]
                 client_secret = st.secrets["client_secret"]
-                redirect_uri = "http://localhost:8000"
+                redirect_uri = "https://localhost:8000"
 
                 token_url = "https://api.fitbit.com/oauth2/token"
                 headers = {
