@@ -107,7 +107,7 @@ if st.session_state["download_success"] and st.session_state["filename"]:
             )
 
         # アップロード先の案内（ここにDriveリンクを入れる）
-        upload_url = "https://drive.google.com/file/d/1-7u_C_tZ9yzI7iQCnFfLT_qLYp14XkXq/view?usp=sharing"  # 用意したアップロード先
+        upload_url = "https://kgmgrp-my.sharepoint.com/:f:/g/personal/haruka_yoshida_kagome_com/Ep97YeZXcxtPuYOiDiRbXaYB3Y5YCxBYQNA3s07MC5UW1g?e=bpeU9S"  # 用意したアップロード先
         st.markdown("---")
         st.markdown(f"""
         ### Step.3 📝 ファイルをアップロードしてください
@@ -115,7 +115,7 @@ if st.session_state["download_success"] and st.session_state["filename"]:
         1. 上のボタンでファイルをダウンロード
         2. 以下のリンクから、ダウンロードしたファイルをアップロード
         
-        🔗 [アップロード用Google Driveフォルダ]({upload_url})
+        🔗 [アップロード用フォルダ]({upload_url})
         """)   
         
     except FileNotFoundError:
