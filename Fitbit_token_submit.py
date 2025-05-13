@@ -109,9 +109,11 @@ if st.session_state["download_success"] and st.session_state["filename"]:
         st.markdown(f"""
         ### Step.3 ✉ ファイルを井上拓郎課長宛てにメールでご提出をお願いいたします
         
-        メールアドレス：Takuro_Inoute@kagome.co.jp
+        メールアドレス：Takuro_Inoue@kagome.co.jp
 
-        ⚠️ 注意事項 ⚠️
+        ※アドレスをクリックするとOutloockが立ち上がります。
+
+        ## ⚠️ 注意事項 ⚠️
         個人情報保護のため、井上課長のみを宛先とするようにお願いいたします。
         関谷さんや吉田はccなどの宛先に含めないようお願い申し上げます。
         
