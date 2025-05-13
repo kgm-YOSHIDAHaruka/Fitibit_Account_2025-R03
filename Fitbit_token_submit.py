@@ -105,8 +105,6 @@ if st.session_state["download_success"] and st.session_state["filename"]:
                 mime="application/json"
             )
 
-        # アップロード先の案内（ここにDriveリンクを入れる）
-        upload_url = "https://kgmgrp-my.sharepoint.com/:f:/g/personal/haruka_yoshida_kagome_com/Ep97YeZXcxtPuYOiDiRbXaYB3Y5YCxBYQNA3s07MC5UW1g?e=bpeU9S"  # 用意したアップロード先
         st.markdown("---")
         st.markdown(f"""
         ### Step.3 ✉ ファイルを井上拓郎課長宛てにメールでご提出をお願いいたします
