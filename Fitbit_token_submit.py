@@ -109,11 +109,14 @@ if st.session_state["download_success"] and st.session_state["filename"]:
         upload_url = "https://kgmgrp-my.sharepoint.com/:f:/g/personal/haruka_yoshida_kagome_com/Ep97YeZXcxtPuYOiDiRbXaYB3Y5YCxBYQNA3s07MC5UW1g?e=bpeU9S"  # 用意したアップロード先
         st.markdown("---")
         st.markdown(f"""
-        ### Step.3 📝 ファイルをアップロードしてください
+        ### Step.3 ✉ ファイルを井上拓郎課長宛てにメールでご提出をお願いいたします
         
-        以下のリンクから、上でダウンロードしたファイルのアップロードをお願いいたします。
+        メールアドレス：Takuro_Inoute@kagome.co.jp
+
+        ⚠️ 注意事項 ⚠️
+        個人情報保護のため、井上課長のみを宛先とするようにお願いいたします。
+        関谷さんや吉田はccなどの宛先に含めないようお願い申し上げます。
         
-        🔗 [アップロード用フォルダ]({upload_url})
         """)   
         
     except FileNotFoundError:
